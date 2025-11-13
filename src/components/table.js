@@ -1,4 +1,4 @@
-import {cloneTemplate} from "../lib/utils.js";
+import { cloneTemplate } from '../lib/utils.js';
 
 /**
  * Инициализирует таблицу и вызывает коллбэк при любых изменениях и нажатиях на кнопки
@@ -12,27 +12,23 @@ export function initTable(settings, onAction) {
   const root = cloneTemplate(tableTemplate);
 
   // @todo: #1.2 —  вывести дополнительные шаблоны до и после таблицы
-    if (before && before.length > 0) {
-        before.reverse().forEach(subName => {
-            root[subName] = cloneTemplate(subName);
-            root.container.prepend(root[subName].container);
-        });
-    }
+  before.reverse().forEach((templateId) => { // перебираем нужный массив идентификаторов
+    root[templateId] = cloneTemplate(templateId); // клонируем и получаем объект, сохраняем в таблице
+    root.container.prepend(root[templateId].container); // добавляем к таблице после (append) или до (prepend)
+  });
 
-    if (after && after.length > 0) {
-        after.forEach(subName => {
-            root[subName] = cloneTemplate(subName);
-            root.container.append(root[subName].container);
-        });
-    }
-
+  after.forEach((templateId) => { // перебираем нужный массив идентификаторов
+    root[templateId] = cloneTemplate(templateId); // клонируем и получаем объект, сохраняем в таблице
+    root.container.append(root[templateId].container); // добавляем к таблице после (append) или до (prepend)
+  });
+  
   // @todo: #1.3 —  обработать события и вызвать onAction()
   root.container.addEventListener('change', () => {
     onAction();
   });
 
   root.container.addEventListener('reset', () => {
-    setTimeout``(onAction);
+    setTimeout(onAction); // Отложенный вызов с задержкой
   });
 
   root.container.addEventListener('submit', (e) => {
@@ -45,9 +41,9 @@ export function initTable(settings, onAction) {
     const nextRows = data.map((item) => {
       const row = cloneTemplate(rowTemplate);
 
-      Object.keys(item).forEach((key) => {
-        if (row.elements && key in row.elements) {
-            row.elements[key].textContent = item[key];
+      Object.keys(item).forEach(key => {
+        if (key in row.elements) {
+          row.elements[key].textContent = item[key];
         }
       });
 
